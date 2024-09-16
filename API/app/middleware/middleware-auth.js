@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'your_secret_key'; // Replace with your secure key
+const JWT_SECRET = 'your_secret_key'; // Replace with your actual secret key
 
-// Middleware to verify token
+// Middleware to verify the token
 const verifyToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) {
@@ -18,14 +18,4 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// Middleware to check user role
-const authorizeRole = (role) => {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      return res.status(403).json({ message: 'Access denied.' });
-    }
-    next();
-  };
-};
-
-module.exports = { verifyToken, authorizeRole };
+module.exports = { verifyToken };

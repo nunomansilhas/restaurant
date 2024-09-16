@@ -66,31 +66,37 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
+    <!-- JavaScript for handling login -->
     <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent the default form submission behavior
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('/api/login', {
+                // Send a POST request to the /api/login endpoint
+                const response = await fetch('http://localhost:3000/api/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password }) // Send email and password in the request body
                 });
 
-                const data = await response.json();
+                const data = await response.json(); // Parse the JSON response
 
                 if (response.ok) {
+                    // If login is successful, store the JWT token in localStorage
                     localStorage.setItem('token', data.token);
+                    // Redirect to the dashboard
                     window.location.href = 'dashboard.html';
                 } else {
+                    // If login failed, display the error message
                     document.getElementById('login-error').innerText = data.message;
                 }
             } catch (error) {
+                // Display a generic error message if something went wrong with the request
                 document.getElementById('login-error').innerText = 'An error occurred. Please try again.';
             }
         });
