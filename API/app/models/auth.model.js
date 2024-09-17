@@ -25,3 +25,37 @@ exports.createUser = (email, hashedPassword, role, callback) => {
     callback(null, result);
   });
 };
+exports.getUserProfile = (userId, result) => {
+  const query = 'SELECT username, email, profile_pic FROM users WHERE id = ?';
+  db.query(query, [userId], (err, res) => {
+      if (err) {
+          result(err, null);
+          return;
+      }
+      result(null, res[0]);
+  });
+};
+
+// Update user password
+exports.updateUserPassword = (userId, hashedPassword, result) => {
+  const query = 'UPDATE users SET password = ? WHERE id = ?';
+  db.query(query, [hashedPassword, userId], (err, res) => {
+      if (err) {
+          result(err, null);
+          return;
+      }
+      result(null, { message: 'Password updated successfully' });
+  });
+};
+
+// Update user profile picture
+exports.updateUserProfilePic = (userId, profilePicPath, result) => {
+  const query = 'UPDATE users SET profile_pic = ? WHERE id = ?';
+  db.query(query, [profilePicPath, userId], (err, res) => {
+      if (err) {
+          result(err, null);
+          return;
+      }
+      result(null, { message: 'Profile picture updated successfully' });
+  });
+};

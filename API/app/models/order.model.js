@@ -32,7 +32,7 @@ Order.findById = (id, result) => {
 };
 
 Order.getAllPending = (result) => {
-    sql.query("SELECT * FROM orders WHERE status = 'Pending'", (err, res) => {
+    sql.query("SELECT * FROM orders", (err, res) => {
         if (err) {
             result(err, null);
             return;

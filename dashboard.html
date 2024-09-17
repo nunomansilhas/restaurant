@@ -16,6 +16,20 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .chart-area {
+    position: relative;
+    height: 400px; /* Ajustar a altura conforme necessário */
+    width: 100%;
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+    </style>
 </head>
 
 <body id="page-top">
@@ -52,6 +66,10 @@
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
                                 <a class="dropdown-item" href="#" id="logoutButton">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
                                 </a>
@@ -63,9 +81,36 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
-                    <p>Welcome to the restaurant management system dashboard.</p>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row" id="dashboard-cards">
+                        <!-- The cards will be dynamically populated by JavaScript -->
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Monthly Orders Overview</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-bar">
+                                        <canvas id="myBarChart" width="1060" height="287"></canvas>
+                                    </div>
+                                    <hr>
+                                    <button id="backButton" style="display:none;" class="btn btn-primary mt-3">Back to Monthly View</button>
+                                </div>
+                            </div>
+                                                     
+                        </div>
+                    </div>
+                    
+
                 </div>
                 <!-- /.container-fluid -->
             </div>
@@ -97,14 +142,17 @@
 
 <!-- Core plugin JavaScript-->
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
+<script src="vendor/chart.js/Chart.min.js"></script>
 <!-- Custom scripts for all pages-->
 <script src="js/sb-admin-2.min.js"></script>
 
 <!-- Include the separated scripts -->
 <script src="scripts/auth/verification.js"></script>
 <script src="scripts/menu/sidebar.js"></script>
+<!-- Include the script to dynamically populate the dashboard cards -->
+<script src="scripts/dashboard/cards.js"></script>
 
+<script src="js/demo/chart-bar-demo.js"></script> 
 
 </body>
 
