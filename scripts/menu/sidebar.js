@@ -31,7 +31,7 @@ function populateSidebar(role) {
         dynamicMenu.innerHTML += `
             <div class="sidebar-heading">Admin Manage</div>
             <li class="nav-item">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="dashboard.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -46,6 +46,12 @@ function populateSidebar(role) {
                 <a class="nav-link" href="tables.html">
                     <i class="fas fa-fw fa-chair"></i>
                     <span>Layout</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="orders-admin.html">
+                    <i class="fas fa-fw fa-receipt"></i>
+                    <span>Orders</span>
                 </a>
             </li>
             <hr class="sidebar-divider">

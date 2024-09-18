@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Rest Admin - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .chart-area {
+    position: relative;
+    height: 400px; /* Ajustar a altura conforme necessário */
+    width: 100%;
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+    </style>
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- The sidebar will be populated dynamically by sidebar.js -->
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user-name">Admin Name</span>
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#" id="logoutButton">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">Orders Management</h1>
+
+                    <!-- Orders Filters -->
+                    <div class="mb-2">
+                        <input type="text" id="orderSearch" class="form-control" placeholder="Search by Order ID, Table Number, or Status">
+                        <div class="btn-group mt-4" role="group" aria-label="Filter orders by status">
+                            <button type="button" class="btn btn-info  filter-btn" data-status="all">All</button>
+                            <button type="button" class="btn btn-outline-warning  filter-btn" data-status="pending">Pending</button>
+                            <button type="button" class="btn btn-outline-success  filter-btn" data-status="completed">Completed</button>
+                        </div>
+                    </div>
+                    <!-- Time Filters -->
+                    <div class="mb-4">
+                        <div class="btn-group mt-2" role="group" aria-label="Filter orders by time">
+                            <button type="button" class="btn btn-primary time-filter-btn" data-time="all">All Time</button>
+                            <button type="button" class="btn btn-outline-primary time-filter-btn" data-time="monthly">This Month</button>
+                            <button type="button" class="btn btn-outline-primary time-filter-btn" data-time="daily">Today</button>
+                        </div>
+                    </div>
+                    <!-- Orders Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="ordersTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Table Number</th>
+                                    <th>Status</th>
+                                    <th>Total Amount</th>
+                                    <th>Created At</th>
+                                    <th>Staff Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Order pagination">
+                        <ul class="pagination justify-content-center" id="pagination"></ul>
+                    </nav>
+
+                    <!-- No Orders Found Message -->
+                    <div id="noOrdersMessage" class="alert alert-info" style="display: none;">No orders found for the selected filter.</div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+                <!-- Order Details Modal Container -->
+                <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content" id="modalContent">
+                            <!-- Modal content will be generated dynamically here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- End of Order Details Modal -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Rest Admin 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+    <!-- Include the separated scripts -->
+    <script src="scripts/auth/verification.js"></script>
+    <script src="scripts/menu/sidebar.js"></script>
+    <!-- Custom scripts for the Orders Page -->
+    <script>
+let orders = []; // Store fetched orders
+let currentPage = 1;
+let currentStatus = 'all'; // Track current status filter
+let currentTime = 'all'; // Track current time filter
+const itemsPerPage = 10;
+const token = localStorage.getItem('token'); // Assuming the token is stored in local storage
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchOrders();
+
+    // Event listeners for status filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('btn-info', 'btn-warning', 'btn-success');
+                switch (btn.dataset.status) {
+                    case 'all':
+                        btn.classList.add('btn-outline-info');
+                        break;
+                    case 'pending':
+                        btn.classList.add('btn-outline-warning');
+                        break;
+                    case 'completed':
+                        btn.classList.add('btn-outline-success');
+                        break;
+                    default:
+                        btn.classList.add('btn-outline-secondary');
+                }
+            });
+
+            e.target.classList.remove('btn-outline-info', 'btn-outline-warning', 'btn-outline-success');
+            switch (e.target.dataset.status) {
+                case 'all':
+                    e.target.classList.add('btn-info');
+                    break;
+                case 'pending':
+                    e.target.classList.add('btn-warning');
+                    break;
+                case 'completed':
+                    e.target.classList.add('btn-success');
+                    break;
+            }
+
+            currentStatus = e.target.dataset.status;
+            filterOrdersByStatusAndTime(currentStatus, currentTime, 1); // Reset to page 1
+        });
+    });
+
+    // Event listeners for time filter buttons
+    document.querySelectorAll('.time-filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.time-filter-btn').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+
+            e.target.classList.remove('btn-outline-primary');
+            e.target.classList.add('btn-primary');
+
+            currentTime = e.target.dataset.time;
+            filterOrdersByStatusAndTime(currentStatus, currentTime, 1); // Reset to page 1
+        });
+    });
+
+    // Event listener for search input
+    document.getElementById('orderSearch').addEventListener('input', (e) => {
+        const searchQuery = e.target.value.toLowerCase().trim();
+        searchOrders(searchQuery);
+    });
+});
+        
+        async function fetchOrders() {
+    try {
+        const response = await fetch('http://localhost:3000/api/orders', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+        orders = await response.json();
+        filterOrdersByStatusAndTime(currentStatus, currentTime, 1); // Start with page 1
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+    }
+}
+        
+        // Fetch staff name by user ID
+async function fetchStaffName(userId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+        const staff = await response.json();
+        return staff.name || 'Unknown';
+    } catch (error) {
+        console.error('Error fetching staff:', error);
+        return 'Unknown';
+    }
+}
+
+// Search Orders based on multiple fields
+function searchOrders(query) {
+    const filteredOrders = orders.filter(order => {
+        const orderMonth = new Date(order.created_at).toLocaleString('default', { month: 'long' }).toLowerCase();
+        const orderDate = new Date(order.created_at).toISOString().slice(0, 10);
+        const orderStaffName = document.querySelector(`span.staff-name[data-staff-id="${order.user_id}"]`)?.textContent.toLowerCase();
+        const orderTableNumber = order.table_number.toString();
+        const orderId = order.id.toString();
+
+        return (
+            orderMonth.includes(query) || // Search by month name
+            (orderStaffName && orderStaffName.includes(query)) || // Search by staff name
+            orderTableNumber.includes(query) || // Search by table number
+            orderId.includes(query) // Search by order ID
+        );
+    });
+
+    paginateOrders(filteredOrders, 1);
+}
+        
+// Paginate and render orders
+function paginateOrders(filteredOrders, page) {
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    ordersTableBody.innerHTML = ''; // Clear the table
+
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
+
+    paginatedOrders.forEach(async (order) => {
+        const staffName = await fetchStaffName(order.user_id);
+        const orderItems = await fetchOrderItems(order.id);
+        let totalAmount = 0;
+
+        // Calculate total amount based on order items
+        await Promise.all(orderItems.map(async (item) => {
+            const dish = await fetchDishDetails(item.dish_id);
+            if (dish) {
+                totalAmount += dish.price * item.quantity;
+            }
+        }));
+
+        const row = `<tr data-status="${order.status.toLowerCase()}" data-date="${new Date(order.created_at).toISOString().slice(0, 10)}">
+            <td style="width: 10%;">${order.id}</td>
+            <td style="width: 10%;">${order.table_number}</td>
+            <td style="width: 5%;"><span class="badge badge-${getStatusBadgeClass(order.status)}">${order.status}</span></td>
+            <td style="width: 15%;">€${totalAmount.toFixed(2)}</td> <!-- Display calculated total amount -->
+            <td style="width: 15%;">${new Date(order.created_at).toLocaleString()}</td>
+            <td style="width: 20%;"><span class="staff-name">${staffName}</span></td>
+            <td style="width: 20%;">
+                <button class="btn btn-primary btn-sm view-details" data-id="${order.id}" onclick="generateOrderModal(${order.id})">View Details</button>
+                ${order.status.toLowerCase() === 'pending' ? `<button class="btn btn-success btn-sm mark-completed" onclick="markAsCompleted(${order.id})">Mark as Completed</button>` : ''}
+            </td>
+        </tr>`;
+        ordersTableBody.innerHTML += row;
+    });
+
+    createPagination(filteredOrders.length, page); // Create the pagination UI
+}
+
+        function createPagination(totalItems, currentPage) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = ''; // Clear pagination
+        
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                if (i === currentPage) {
+                    li.classList.add('active');
+                }
+        
+                const a = document.createElement('a');
+                a.classList.add('page-link');
+                a.textContent = i;
+                a.href = '#';
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    filterOrdersByStatusAndTime(currentStatus, currentTime, i); // Apply filters and go to the selected page
+                });
+        
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+        
+        // Unified filter function to handle both status and time filters
+        function createPagination(totalItems, currentPage) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = ''; // Clear pagination
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.classList.add('page-item');
+        if (i === currentPage) {
+            li.classList.add('active');
+        }
+
+        const a = document.createElement('a');
+        a.classList.add('page-link');
+        a.textContent = i;
+        a.href = '#';
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterOrdersByStatusAndTime(currentStatus, currentTime, i); // Apply filters and go to the selected page
+        });
+
+        li.appendChild(a);
+        pagination.appendChild(li);
+    }
+}        
+        function getStatusBadgeClass(status) {
+    switch (status.toLowerCase()) {
+        case 'pending':
+            return 'warning';
+        case 'completed':
+            return 'success';
+        default:
+            return 'secondary';
+    }
+}
+
+        // Update order status to completed with SweetAlert2 for confirmation
+async function markAsCompleted(orderId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/orders/${orderId}/complete`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Order has been marked as completed.',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+            });
+            await fetchOrders(); // Reload the orders after the update
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an issue marking the order as completed.',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+        }
+    } catch (error) {
+        console.error('Error updating order:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'Try Again'
+        });
+    }
+}
+
+// Fetch dish details by dishId to get the price
+async function fetchDishDetails(dishId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/dishes/${dishId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+        const dishArray = await response.json();
+        const dish = dishArray[0]; // Extract the first element from the array
+        console.log('Dish Details:', dish); // Log dish details for debugging
+        return dish;
+    } catch (error) {
+        console.error('Error fetching dish details:', error);
+        return null;
+    }
+}
+
+// Fetch order items for modal
+async function fetchOrderItems(orderId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/order-items/${orderId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+        const items = await response.json();
+        
+        // Check if items is an array, otherwise return an empty array
+        if (Array.isArray(items)) {
+            console.log('Order Items:', items); // Log order items for debugging
+            return items;
+        } else {
+            console.log('No items found:', items.message); // Log the message from the API
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching order items:', error);
+        return [];
+    }
+}
+
+// Generate modal content dynamically with order items and dish prices
+async function generateOrderModal(orderId) {
+    try {
+        const orderResponse = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include Authorization header
+            },
+        });
+        const order = await orderResponse.json();
+        const staffName = await fetchStaffName(order.user_id);
+        const orderItems = await fetchOrderItems(orderId);
+
+        let totalAmount = 0;
+        const orderItemsHtml = await Promise.all(orderItems.map(async (item) => {
+            const dish = await fetchDishDetails(item.dish_id);
+            if (dish) {
+                const itemTotal = dish.price * item.quantity;
+                totalAmount += itemTotal;
+                // Updated format for Amount - Dish Name - Total in euros
+                return `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>${item.quantity} x ${dish.name}</span>
+                            <span>€${itemTotal.toFixed(2)}</span>
+                        </li>`;
+            } else {
+                return `<li class="list-group-item">Unknown dish</li>`;
+            }
+        }));
+
+        const modalContent = `
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h6>Table Number: <span id="orderTableNumber">${order.table_number}</span></h6>
+                        <h6>Status: <span id="orderStatus">${order.status}</span></h6>
+                        <h6>Staff Name: <span id="orderStaffName">${staffName}</span></h6>
+                        <h6>Created At: <span id="orderCreatedAt">${new Date(order.created_at).toLocaleString()}</span></h6>
+                    </div>
+                </div>
+                <hr>
+                <h5>Ordered Items</h5>
+                <ul id="orderItemsList" class="list-group">
+                    ${orderItemsHtml.join('')}
+                </ul>
+                <hr>
+                <h5 class="text-right">Total: €${totalAmount.toFixed(2)}</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                ${order.status.toLowerCase() === 'pending' ? `<button class="btn btn-success" onclick="markAsCompleted(${order.id})">Mark as Completed</button>` : ''}
+            </div>
+        `;
+
+        document.getElementById('modalContent').innerHTML = modalContent;
+        $('#orderDetailsModal').modal('show'); // Show the modal
+    } catch (error) {
+        console.error('Error generating modal content:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Could not fetch order details.',
+            icon: 'error',
+            confirmButtonText: 'Close'
+        });
+    }
+}
+function filterOrdersByStatusAndTime(status, time, page) {
+    const today = new Date().toISOString().slice(0, 10);
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    const filteredOrders = orders.filter(order => {
+        const orderStatus = status === 'all' || order.status.toLowerCase() === status;
+        const orderDate = new Date(order.created_at).toISOString().slice(0, 10);
+        const timeMatch = time === 'all' || 
+                          (time === 'daily' && orderDate === today) || 
+                          (time === 'monthly' && orderDate.startsWith(currentMonth));
+        
+        return orderStatus && timeMatch;
+    });
+
+    paginateOrders(filteredOrders, page); // Apply the filters and paginate from the specified page
+    return filteredOrders;
+}
+</script>
+        
+
+
+</body>
+
+</html>

@@ -51,3 +51,29 @@ exports.findAllPending = (req, res) => {
         else res.send(data);
     });
 };
+
+// Mark order as completed (PUT /orders/:id/complete)
+exports.markAsCompleted = (req, res) => {
+    Order.markAsCompleted(req.params.id, req.body.timeToComplete, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                res.status(404).send({ message: `Order not found with id ${req.params.id}` });
+            } else {
+                res.status(500).send({ message: "Error marking order as completed with id " + req.params.id });
+            }
+        } else res.send({ message: "Order marked as completed successfully!" });
+    });
+};
+
+// Update the timeToComplete for an order (PUT /orders/:id/time-to-complete)
+exports.updateTimeToComplete = (req, res) => {
+    Order.updateTimeToComplete(req.params.id, req.body.timeToComplete, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                res.status(404).send({ message: `Order not found with id ${req.params.id}` });
+            } else {
+                res.status(500).send({ message: "Error updating time to complete for order with id " + req.params.id });
+            }
+        } else res.send({ message: "Time to complete updated successfully!" });
+    });
+};

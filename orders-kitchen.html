@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Kitchen Orders - Rest Admin</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .waiting-long {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.007);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .order-card {
+            transition: transform 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: scale(1.05);
+        }
+
+        .order-info {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-timer {
+            font-size: 1rem;
+            color: #888;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+
+        .waiting-long {
+            border-left: 0.25rem solid red !important;
+        }
+
+        .text-warning-long {
+            color: red !important;
+        }
+
+        .badge-service {
+            font-size: 0.9rem;
+            padding: 0.3rem 0.6rem;
+            color: white !important;
+        }
+
+        .badge-takeaway {
+            background-color: orange;
+            color: white !important;
+        }
+
+        .badge-room-service {
+            background-color: blue;
+            color: white !important;
+        }
+
+        .timer-normal {
+            color: green;
+        }
+
+        .timer-medium {
+            color: orange;
+        }
+
+        .timer-critical {
+            color: red;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Sidebar content populated dynamically -->
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user-name">Kitchen Staff</span>
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile
+                                </a>
+                                <a class="dropdown-item" href="#" id="logoutButton">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Filter Buttons -->
+                    <div class="btn-group mb-4">
+                        <button onclick="filterOrders('all')" class="btn btn-secondary">All</button>
+                        <button onclick="filterOrders('Takeaway')" class="btn btn-warning">Takeaway</button>
+                        <button onclick="filterOrders('Room Service')" class="btn btn-primary">Room Service</button>
+                    </div>
+
+                    <!-- Pending Orders Section -->
+                    <h1 class="h3 mb-4 text-gray-800">Pending Orders</h1>
+                    <div id="pending-orders" class="row">
+                        <!-- Orders will be dynamically generated here -->
+                    </div>
+
+                    <!-- Completed Orders Section -->
+                    <h1 class="h3 mb-4 text-gray-800">Completed Orders</h1>
+                    <div id="completed-orders" class="row">
+                        <!-- Completed orders will be dynamically generated here -->
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Rest Admin 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+    <script src="scripts/menu/sidebar.js"></script>
+    <script>
+        let pendingOrders = [];
+        let completedOrders = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchOrders(); // Fetch orders from API
+            startOrderTimers();
+        });
+
+        // Fetch orders from the API and filter for current date
+        async function fetchOrders() {
+            try {
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add authorization token
+                    },
+                });
+                const orders = await response.json();
+                const today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
+
+                // Filter orders for today and sort them into pending and completed
+                pendingOrders = orders.filter(order => order.status === 'Pending' && order.created_at.startsWith(today));
+                completedOrders = orders.filter(order => order.status === 'Completed' && order.created_at.startsWith(today));
+
+                renderOrders(pendingOrders, 'pending');
+                renderOrders(completedOrders, 'completed');
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        }
+
+        // Fetch staff name by user ID
+        async function fetchStaffName(userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add authorization token
+                    },
+                });
+                const user = await response.json();
+                return user.name || 'Unknown'; // Fallback to 'Unknown' if name is not available
+            } catch (error) {
+                console.error('Error fetching staff name:', error);
+                return 'Unknown';
+            }
+        }
+
+        // Render orders with service type labels
+        async function renderOrders(orders, type) {
+            const container = type === 'pending' ? document.getElementById('pending-orders') : document.getElementById('completed-orders');
+            container.innerHTML = '';
+
+            orders.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+            for (const order of orders) {
+                // Handle case where `dishes` may be undefined or not an array
+                const dishes = Array.isArray(order.dishes) ? order.dishes.join(', ') : 'No dishes available';
+                const staffName = await fetchStaffName(order.user_id); // Fetch staff name based on user_id
+
+                const serviceTypeBadge = order.categoryBadge === 'Takeaway' ? '<span class="badge badge-service badge-takeaway">Takeaway</span>' :
+                    '<span class="badge badge-service badge-room-service">Room Service</span>';
+                const timer = order.timeToComplete ? `${order.timeToComplete} min` : '00:00';
+                const orderCard = `
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card ${type === 'pending' ? 'border-left-warning' : 'border-left-success'} shadow h-100 py-2 order-card" data-id="${order.id}">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-md font-weight-bold ${type === 'pending' ? 'text-warning' : 'text-success'} text-uppercase mb-1">
+                                            Order #${order.id} ${serviceTypeBadge}
+                                        </div>
+                                        <div class="order-info">
+                                            <span>Dishes: ${dishes}</span><br>
+                                            <span>Table Number: ${order.table_number}</span><br>
+                                            <span>Staff: ${staffName}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        ${type === 'pending' ? `<a href="#" class="btn btn-outline-success btn-circle btn-lg" onclick="markAsCompleted(${order.id})">
+                                            <i class="fas fa-check"></i>
+                                        </a>` : `<i class="fas fa-utensils fa-2x text-gray-300"></i>`}
+                                    </div>
+                                    <div class="order-timer" id="timer-${order.id}">${timer}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += orderCard;
+            }
+        }
+
+        // Start timers for pending orders
+        function startOrderTimers() {
+            setInterval(() => {
+                const now = new Date();
+                pendingOrders.forEach(order => {
+                    const orderDate = new Date(order.created_at);
+                    const elapsedMs = now - orderDate;
+
+                    const elapsedMinutes = Math.floor(elapsedMs / 60000); // Minutes
+                    const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000); // Seconds
+
+                    const timerElement = document.getElementById(`timer-${order.id}`);
+                    if (timerElement) {
+                        timerElement.textContent = `${elapsedMinutes}:${elapsedSeconds < 10 ? '0' + elapsedSeconds : elapsedSeconds}`;
+
+                        const orderCard = document.querySelector(`.order-card[data-id="${order.id}"]`);
+                        const titleElement = orderCard.querySelector('.text-md');
+
+                        if (elapsedMinutes >= 5) {
+                            orderCard.classList.add('waiting-long');
+                            titleElement.classList.replace('text-warning', 'text-warning-long');
+                        } else if (elapsedMinutes >= 3) {
+                            timerElement.classList.replace('timer-normal', 'timer-medium');
+                        } else {
+                            timerElement.classList.add('timer-normal');
+                        }
+                    }
+                });
+            }, 1000);
+        }
+
+        // Mark an order as completed
+        async function markAsCompleted(orderId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/orders/${orderId}/complete`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add authorization token
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        timeToComplete: document.getElementById(`timer-${orderId}`).textContent, // Pass the timer value
+                    }),
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Order #' + orderId + ' has been marked as completed.',
+                        icon: 'success',
+                        timer: 1000,
+                        showConfirmButton: false
+                    });
+
+                    await fetchOrders(); // Re-fetch orders to update the UI
+                } else {
+                    console.error('Failed to mark order as completed.');
+                }
+            } catch (error) {
+                console.error('Error completing order:', error);
+            }
+        }
+
+        // Filter orders by service type (All, Takeaway, Room Service)
+        function filterOrders(serviceType) {
+            const filteredOrders = serviceType === 'all' ? pendingOrders : pendingOrders.filter(order => order.categoryBadge === serviceType);
+            renderOrders(filteredOrders, 'pending');
+        }
+    </script>
+</body>
+
+</html>

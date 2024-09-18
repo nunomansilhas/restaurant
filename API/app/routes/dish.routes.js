@@ -5,6 +5,7 @@ module.exports = (app) => {
     router.post("/", dishes.create);
     router.put("/:id", dishes.update);
     router.get("/", dishes.findAll);
+    router.get("/:id", dishes.findById);
     router.delete("/:id", dishes.delete);
 
     app.use('/api/dishes', router);

@@ -46,6 +46,18 @@ exports.findAll = (req, res) => {
     });
 };
 
+exports.findById = (req, res) => {
+    Dish.getById(req.params.id, (err, data) => {
+        if (err) {
+            if (err.kind === "not_found") {
+                res.status(404).send({ message: `Dish not found with id ${req.params.id}` });
+            } else {
+                res.status(500).send({ message: "Could not FIND dish with id " + req.params.id });
+            }
+        } else res.send(data);
+    });
+};
+
 // Remove a dish (DELETE /dishes/{id})
 exports.delete = (req, res) => {
     Dish.remove(req.params.id, (err, data) => {

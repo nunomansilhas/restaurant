@@ -46,6 +46,16 @@ Dish.getAll = (result) => {
     });
 };
 
+Dish.getById = (id, result) => {
+    sql.query("SELECT * FROM dishes WHERE id = ?", id, (err, res) => {
+        if (err) {
+            result(err, null);
+            return;
+        }
+        result(null, res);
+    });
+};
+
 Dish.remove = (id, result) => {
     sql.query("DELETE FROM dishes WHERE id = ?", id, (err, res) => {
         if (err) {

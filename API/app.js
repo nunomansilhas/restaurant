@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 const db = require('./app/models/db'); // Database connection (replace with your actual path)
 const authRoutes = require('./app/routes/auth.routes.js'); // Import auth routes
+const userRoutes = require('./app/routes/user.routes.js'); // Import user routes
+const orderItemsRoutes = require('./app/routes/order-items.routes.js'); // Import order-items routes
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +46,12 @@ app.get('/api/dashboard', verifyToken, (req, res) => {
 
 // Load the auth routes for login and register
 app.use('/api', authRoutes);
+
+// Load the user routes
+app.use('/api/users', verifyToken, userRoutes); // Protect user routes with verifyToken
+
+// Load the order items routes
+app.use('/api/order-items', verifyToken, orderItemsRoutes); // Protect order-items routes with verifyToken
 
 // Load the other routes (dishes, orders, tables, layout)
 require('./app/routes/dish.routes.js')(app);   // Handles all dish-related routes
