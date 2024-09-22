@@ -30,8 +30,8 @@ Order.findById = (id, result) => {
         result({ kind: "not_found" }, null);
     });
 };
-Order.markAsCompleted = (id, result) => {
-    sql.query("UPDATE orders SET status = 'Completed' WHERE id = ?", [id], (err, res) => {
+Order.markAsCompleted = (id, timeToComplete, result) => {
+    sql.query("UPDATE orders SET status = 'Completed', timeToComplete = ? WHERE id = ?", [timeToComplete, id], (err, res) => {
         if (err) {
             result(err, null);
             return;
@@ -43,6 +43,7 @@ Order.markAsCompleted = (id, result) => {
         result(null, res);
     });
 };
+
 Order.getAllPending = (result) => {
     sql.query("SELECT * FROM orders", (err, res) => {
         if (err) {

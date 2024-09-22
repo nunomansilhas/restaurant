@@ -51,7 +51,23 @@ function populateSidebar(role) {
             <li class="nav-item">
                 <a class="nav-link" href="orders-admin.html">
                     <i class="fas fa-fw fa-receipt"></i>
-                    <span>Orders</span>
+                    <span>Orders Admin</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Kitchen Manage</div>
+            <li class="nav-item">
+                <a class="nav-link" href="orders-kitchen.html">
+                    <i class="fas fa-fw fa-receipt"></i>
+                    <span>Orders Kitchen</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Staff Manage</div>
+            <li class="nav-item">
+                <a class="nav-link" href="orders-staff.html">
+                    <i class="fas fa-fw fa-receipt"></i>
+                    <span>Orders Staff</span>
                 </a>
             </li>
             <hr class="sidebar-divider">

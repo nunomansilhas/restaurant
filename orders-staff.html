@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Staff Orders - Rest Admin</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .action-button {
+            margin: 20px 0;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .floating-order-summary {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #4e73df;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-order-summary:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h5 {
+            margin: 0;
+        }
+
+        .close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .order-summary-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .order-summary-list ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .modal-footer button {
+            width: 100%;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .tabs button:last-child {
+            margin-right: 0;
+        }
+
+        /* Updated Dish Card */
+        .dish-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e3e6f0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            min-height: 280px;
+            text-align: center;
+        }
+
+        .dish-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .img-bg {
+            height: 117px;
+            background-color: #f3f6f9;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .img-bg img {
+            max-height: 100%;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .dish-stock {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .dish-stock.out-of-stock {
+            color: #dc3545;
+        }
+
+        .dish-price {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .dish-card button {
+            background-color: #4e73df;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Adjust column size for 5 items per row */
+        .col-5-custom {
+            flex: 0 0 20%;
+            max-width: 20%;
+            padding: 15px;
+        }
+
+        @media (max-width: 1200px) {
+            .col-5-custom {
+                flex: 0 0 33.33%;
+                max-width: 33.33%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .col-5-custom {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .col-5-custom {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <!-- Sidebar content populated dynamically -->
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user-name">Staff Member</span>
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="profile.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile
+                                </a>
+                                <a class="dropdown-item" href="#" id="logoutButton">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary action-button" onclick="switchTab('new-order')">Create New Order</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-warning action-button" onclick="switchTab('pending-orders')">View Pending Orders</button>
+                        </div>
+                    </div>
+
+                    <!-- New Order Section -->
+                    <div id="new-order" class="order-section">
+                        <h2>Create a New Order</h2>
+
+                        <!-- Tabs for categories -->
+                        <div class="tabs" id="category-tabs">
+                            <!-- Dynamic tabs will be inserted here -->
+                        </div>
+
+                        <div id="dish-list" class="row">
+                            <!-- Dish selection will appear here dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Pending Orders Section -->
+                    <div id="pending-orders" class="order-section" style="display:none;">
+                        <h2>Pending Orders</h2>
+                        <div id="pending-orders-list">
+                            <!-- Pending orders will be dynamically loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Order Summary Button -->
+                    <div class="floating-order-summary" id="floating-order-summary" onclick="toggleOrderSummary()">
+                        <span id="item-count">0</span>
+                    </div>
+
+                    <!-- Order Summary Modal -->
+                    <div class="modal" id="order-summary-modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5>Order Summary</h5>
+                                <button class="close" onclick="toggleOrderSummary()">×</button>
+                            </div>
+                            <div class="order-summary-list">
+                                <ul id="order-summary-list">
+                                    <!-- Selected items will appear here -->
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" onclick="submitOrder()">Submit Order</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Rest Admin 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="vendor/chart.js/Chart.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+    <script src="scripts/menu/sidebar.js"></script>
+    
+    <script>
+        let selectedItems = [];
+        let itemCount = 0;
+        let dishes = [];
+
+        // Fetch dishes from API and dynamically create tabs and dish list
+        async function fetchDishes() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dishes'); // Replace with your actual endpoint
+                dishes = await response.json();
+
+                // Extract unique categories
+                const categories = [...new Set(dishes.map(dish => dish.category))];
+
+                // Generate category tabs
+                const tabsContainer = document.getElementById('category-tabs');
+                
+                // Add "All" tab to show all dishes
+                const allButton = document.createElement('button');
+                allButton.classList.add('btn', 'btn-outline-primary');
+                allButton.textContent = 'All';
+                allButton.onclick = () => showCategory('All');
+                tabsContainer.appendChild(allButton);
+                
+                categories.forEach(category => {
+                    const button = document.createElement('button');
+                    button.classList.add('btn', 'btn-outline-primary');
+                    button.textContent = category;
+                    button.onclick = () => showCategory(category);
+                    tabsContainer.appendChild(button);
+                });
+
+                // Show all dishes initially
+                showCategory('All');
+            } catch (error) {
+                console.error('Error fetching dishes:', error);
+            }
+        }
+
+        // Show dishes based on selected category
+        function showCategory(category) {
+            const dishList = document.getElementById('dish-list');
+            dishList.innerHTML = '';
+
+            // Filter dishes by category and populate dish list
+            const filteredDishes = category === 'All' ? dishes : dishes.filter(dish => dish.category === category);
+            filteredDishes.forEach(dish => {
+                const dishCard = `
+                    <div class="col-5-custom">
+                        <div class="dish-card">
+                            <div class="dish-info">
+                                <div class="img-bg">
+                                    <img src="img/pos-product-01.png" alt="${dish.name}">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${dish.name}</h5>
+                                    <p class="card-text">${dish.category}</p>
+                                    <div class="d-flex align-items-center justify-content-between price">
+                                        <span class="dish-stock ${dish.stock > 0 ? '' : 'out-of-stock'}">${dish.stock > 0 ? dish.stock + ' Pcs' : 'Out of Stock'}</span>
+                                        <span class="dish-price">$${dish.price}</span>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-primary" onclick="addItem('${dish.name}')">Add</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                dishList.innerHTML += dishCard;
+            });
+        }
+
+        // Toggle the order summary modal
+        function toggleOrderSummary() {
+            const modal = document.getElementById('order-summary-modal');
+            modal.classList.toggle('open');
+        }
+
+        // Close modal when clicking outside the content
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('order-summary-modal');
+            if (event.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+
+        // Add an item to the order summary
+        function addItem(item) {
+            selectedItems.push(item);
+            itemCount++;
+            document.getElementById('item-count').textContent = itemCount;
+            renderOrderSummary();
+        }
+
+        // Render order summary in the modal
+        function renderOrderSummary() {
+            const orderSummaryList = document.getElementById('order-summary-list');
+            orderSummaryList.innerHTML = selectedItems.map(item => `<li>${item}</li>`).join('');
+        }
+
+        // Submit the order
+        function submitOrder() {
+            if (selectedItems.length > 0) {
+                alert("Order Submitted!");
+                selectedItems = [];
+                itemCount = 0;
+                document.getElementById('item-count').textContent = itemCount;
+                renderOrderSummary();
+                toggleOrderSummary(); // Close the modal after submitting
+            } else {
+                alert("No items to submit.");
+            }
+        }
+
+        // Initialize fetch on page load
+        document.addEventListener('DOMContentLoaded', fetchDishes);
+    </script>
+</body>
+
+</html>

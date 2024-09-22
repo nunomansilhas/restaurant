@@ -240,7 +240,14 @@
             }
         }
 
-        // Render orders with service type labels
+        // Helper function to format time from seconds to MM:SS format
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds}`;
+        }
+
+
         async function renderOrders(orders, type) {
             const container = type === 'pending' ? document.getElementById('pending-orders') : document.getElementById('completed-orders');
             container.innerHTML = '';
@@ -254,7 +261,10 @@
 
                 const serviceTypeBadge = order.categoryBadge === 'Takeaway' ? '<span class="badge badge-service badge-takeaway">Takeaway</span>' :
                     '<span class="badge badge-service badge-room-service">Room Service</span>';
-                const timer = order.timeToComplete ? `${order.timeToComplete} min` : '00:00';
+                
+                // Format the timeToComplete from seconds into MM:SS
+                const timer = order.timeToComplete ? formatTime(order.timeToComplete) : '00:00';
+
                 const orderCard = `
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card ${type === 'pending' ? 'border-left-warning' : 'border-left-success'} shadow h-100 py-2 order-card" data-id="${order.id}">
@@ -316,9 +326,16 @@
             }, 1000);
         }
 
-        // Mark an order as completed
         async function markAsCompleted(orderId) {
             try {
+                // Get the elapsed time from the timer
+                const timerText = document.getElementById(`timer-${orderId}`).textContent;
+                const [minutes, seconds] = timerText.split(':').map(Number);
+                
+                // Convert the time to seconds
+                const timeToComplete = (minutes * 60) + seconds;
+
+                // Send the timeToComplete to the backend
                 const response = await fetch(`http://localhost:3000/api/orders/${orderId}/complete`, {
                     method: 'PUT',
                     headers: {
@@ -326,7 +343,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        timeToComplete: document.getElementById(`timer-${orderId}`).textContent, // Pass the timer value
+                        timeToComplete: timeToComplete // Send timeToComplete in seconds
                     }),
                 });
 
@@ -348,6 +365,7 @@
             }
         }
 
+        
         // Filter orders by service type (All, Takeaway, Room Service)
         function filterOrders(serviceType) {
             const filteredOrders = serviceType === 'all' ? pendingOrders : pendingOrders.filter(order => order.categoryBadge === serviceType);
